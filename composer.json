@@ -1,5 +1,5 @@
 {
-    "name":        "swarrot/swarrot",
+    "name":        "lafourchette/swarrot",
     "description": "A simple lib to consume RabbitMQ queues",
     "keywords": ["swarrot","worker"],
     "type": "library",
