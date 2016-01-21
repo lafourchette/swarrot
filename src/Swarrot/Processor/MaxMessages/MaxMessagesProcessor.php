@@ -32,11 +32,11 @@ class MaxMessagesProcessor implements ConfigurableInterface
     public function __construct(ProcessorInterface $processor, LoggerInterface $logger = null)
     {
         $this->processor = $processor;
-        $this->logger    = $logger;
+        $this->logger = $logger;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function process(Message $message, array $options)
     {
@@ -57,16 +57,21 @@ class MaxMessagesProcessor implements ConfigurableInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'max_messages' => 100
+            'max_messages' => 100,
         ));
 
-        $resolver->setAllowedTypes(array(
-            'max_messages' => 'integer',
-        ));
+        if (method_exists($resolver, 'setDefined')) {
+            $resolver->setAllowedTypes('max_messages', 'int');
+        } else {
+            // BC for OptionsResolver < 2.6
+            $resolver->setAllowedTypes(array(
+                'max_messages' => 'int',
+            ));
+        }
     }
 }

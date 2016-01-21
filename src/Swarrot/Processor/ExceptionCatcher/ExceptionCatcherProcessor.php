@@ -25,7 +25,7 @@ class ExceptionCatcherProcessor implements ProcessorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function process(Message $message, array $options)
     {
