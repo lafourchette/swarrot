@@ -4,11 +4,10 @@ namespace Swarrot\Processor\Ack;
 
 use Doctrine\DBAL\DBALException;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTestCase;
 use Swarrot\Broker\Message;
 use Swarrot\Processor\Doctrine\ConnectionProcessor;
 
-class ConnectionProcessorTest extends ProphecyTestCase
+class ConnectionProcessorTest extends \PHPUnit_Framework_TestCase
 {
     public function test()
     {
@@ -101,12 +100,12 @@ class ConnectionProcessorTest extends ProphecyTestCase
         $processor->process(new Message(), $options);
     }
 
-    public function prophesizeConnection()
+    private function prophesizeConnection()
     {
         return $this->prophesize('Doctrine\DBAL\Connection');
     }
 
-    public function prophesizeMasterSlaveConnection()
+    private function prophesizeMasterSlaveConnection()
     {
         return $this->prophesize('Doctrine\DBAL\Connections\MasterSlaveConnection');
     }

@@ -4,7 +4,6 @@ namespace Swarrot\Broker\MessagePublisher;
 
 use PhpAmqpLib\Message\AMQPMessage;
 use PhpAmqpLib\Channel\AMQPChannel;
-
 use Swarrot\Broker\Message;
 
 class PhpAmqpLibMessagePublisher implements MessagePublisherInterface
@@ -17,11 +16,11 @@ class PhpAmqpLibMessagePublisher implements MessagePublisherInterface
 
     public function __construct(AMQPChannel $channel, $exchange)
     {
-        $this->channel  = $channel;
+        $this->channel = $channel;
         $this->exchange = $exchange;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritdoc} */
     public function publish(Message $message, $key = null)
     {
         $properties = $message->getProperties();
@@ -32,7 +31,7 @@ class PhpAmqpLibMessagePublisher implements MessagePublisherInterface
             foreach ($properties['headers'] as $header => $value) {
                 if (is_array($value)) {
                     $type = 'A';
-                } elseif(is_int($value)) {
+                } elseif (is_int($value)) {
                     $type = 'I';
                 } else {
                     $type = 'S';
@@ -40,11 +39,18 @@ class PhpAmqpLibMessagePublisher implements MessagePublisherInterface
 
                 $properties['application_headers'][$header] = array($type, $value);
             }
-
         }
 
-        $message = new AMQPMessage($message->getBody(), $properties);
+        $amqpMessage = new AMQPMessage($message->getBody(), $properties);
 
-        $this->channel->basic_publish($message, $this->exchange, (string) $key);
+        $this->channel->basic_publish($amqpMessage, $this->exchange, (string) $key);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExchangeName()
+    {
+        return $this->exchange;
     }
 }

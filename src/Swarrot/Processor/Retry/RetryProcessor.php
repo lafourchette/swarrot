@@ -19,7 +19,7 @@ class RetryProcessor implements ConfigurableInterface
     {
         $this->processor = $processor;
         $this->publisher = $publisher;
-        $this->logger    = $logger;
+        $this->logger = $logger;
     }
 
     /**

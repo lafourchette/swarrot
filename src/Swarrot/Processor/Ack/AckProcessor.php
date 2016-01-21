@@ -81,13 +81,17 @@ class AckProcessor implements ConfigurableInterface
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver
-            ->setDefaults(array(
-                'requeue_on_error' => false
-            ))
-            ->setAllowedTypes(array(
+        $resolver->setDefaults(array(
+            'requeue_on_error' => false,
+        ));
+
+        if (method_exists($resolver, 'setDefined')) {
+            $resolver->setAllowedTypes('requeue_on_error', 'bool');
+        } else {
+            // BC for OptionsResolver < 2.6
+            $resolver->setAllowedTypes(array(
                 'requeue_on_error' => 'bool',
-            ))
-        ;
+            ));
+        }
     }
 }
