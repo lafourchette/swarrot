@@ -28,10 +28,10 @@ class ConsumerTest extends \PHPUnit_Framework_TestCase
         $processor
             ->process(
                 $message,
-                [
+                array(
                     'poll_interval' => '50000',
                     'queue'         => 'image_crop',
-                ]
+                )
             )
             ->willReturn(false)
         ;

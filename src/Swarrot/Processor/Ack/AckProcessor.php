@@ -49,9 +49,9 @@ class AckProcessor implements ConfigurableInterface
 
             $this->logger and $this->logger->info(
                 '[Ack] Message #'.$message->getId().' have been correctly ack\'ed',
-                [
+                array(
                     'swarrot_processor' => 'ack',
-                ]
+                )
             );
 
             return $return;

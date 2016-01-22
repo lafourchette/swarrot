@@ -41,37 +41,37 @@ class RpcClientProcessorTest extends \PHPUnit_Framework_TestCase
     public function test_it_should_sleep_if_no_correlation_id_set()
     {
         $processor = new RpcClientProcessor;
-        $this->assertNull($processor->process(new Message, []));
+        $this->assertNull($processor->process(new Message, array()));
     }
 
     public function test_it_should_sleep_if_invalid_correlation_id()
     {
         $processor = new RpcClientProcessor;
-        $message = new Message(null, ['correlation_id' => 1]);
+        $message = new Message(null, array('correlation_id' => 1));
 
-        $this->assertNull($processor->process($message, ['rpc_client_correlation_id' => 0]));
-        $this->assertTrue($processor->sleep([]));
+        $this->assertNull($processor->process($message, array('rpc_client_correlation_id' => 0)));
+        $this->assertTrue($processor->sleep(array()));
     }
 
     public function test_it_should_stop_if_correct_correlation_id()
     {
         $processor = new RpcClientProcessor;
-        $message = new Message(null, ['correlation_id' => 1]);
+        $message = new Message(null, array('correlation_id' => 1));
 
-        $this->assertNull($processor->process($message, ['rpc_client_correlation_id' => 1]));
-        $this->assertFalse($processor->sleep([]));
+        $this->assertNull($processor->process($message, array('rpc_client_correlation_id' => 1)));
+        $this->assertFalse($processor->sleep(array()));
     }
 
     public function test_it_should_let_the_nested_processor_act_and_stop_if_correct_correlation_id()
     {
-        $message = new Message(null, ['correlation_id' => 1]);
+        $message = new Message(null, array('correlation_id' => 1));
 
         $processor = $this->prophesize('Swarrot\\Processor\\ProcessorInterface');
-        $processor->process($message, ['rpc_client_correlation_id' => 1])->willReturn(true)->shouldBeCalled();
+        $processor->process($message, array('rpc_client_correlation_id' => 1))->willReturn(true)->shouldBeCalled();
         $processor = new RpcClientProcessor($processor->reveal());
 
-        $this->assertTrue($processor->process($message, ['rpc_client_correlation_id' => 1]));
-        $this->assertFalse($processor->sleep([]));
+        $this->assertTrue($processor->process($message, array('rpc_client_correlation_id' => 1)));
+        $this->assertFalse($processor->sleep(array()));
     }
 }
 

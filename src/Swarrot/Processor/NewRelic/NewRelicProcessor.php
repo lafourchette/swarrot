@@ -64,14 +64,14 @@ class NewRelicProcessor implements ConfigurableInterface
      */
     public function setDefaultOptions(OptionsResolver $resolver)
     {
-        $resolver->setRequired([
+        $resolver->setRequired(array(
             'new_relic_app_name',
-        ]);
-        $resolver->setDefaults([
+        ));
+        $resolver->setDefaults(array(
             'new_relic_license' => null,
             'new_relic_transaction_name' => function (Options $options) {
                 return sprintf('swarrot %s', $options['queue']);
             },
-        ]);
+        ));
     }
 }

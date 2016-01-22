@@ -38,12 +38,12 @@ class PhpAmqpLibMessageProvider implements MessageProviderInterface
             return;
         }
 
-        $properties = [];
-        $propertyKeys = [
+        $properties = array();
+        $propertyKeys = array(
             'content_type', 'delivery_mode', 'content_encoding', 'type', 'timestamp', 'priority', 'expiration',
             'app_id', 'message_id', 'reply_to', 'correlation_id', 'user_id', 'cluster_id', 'channel', 'consumer_tag',
             'delivery_tag', 'redelivered', 'exchange', 'routing_key',
-        ];
+        );
 
         foreach ($propertyKeys as $key) {
             if ($envelope->has($key)) {

@@ -45,11 +45,11 @@ class PeclPackageMessagePublisher implements MessagePublisherInterface
 
         $body = $message->getBody();
         if (empty($body)) {
-            $this->logger->notice('Publishing empty message.', [
+            $this->logger->notice('Publishing empty message.', array(
                 'message' => $body,
                 'exchange' => $this->exchange->getName(),
                 'key' => $key
-            ]);
+            ));
         }
 
         $this->exchange->publish(

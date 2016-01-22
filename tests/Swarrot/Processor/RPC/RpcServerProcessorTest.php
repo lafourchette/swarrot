@@ -36,25 +36,25 @@ class RpcServerProcessorTest extends \PHPUnit_Framework_TestCase
         $processor = new RpcServerProcessor($processor->reveal(), $messagePublisher->reveal());
 
         $message = new Message('', $properties);
-        $this->assertNull($processor->process($message, []));
+        $this->assertNull($processor->process($message, array()));
     }
 
     public function noPropertiesProvider()
     {
-        return [[[]],
-                [['reply_to' => 'foo']],
-                [['correlation_id' => 0]],
-                [['reply_to' => '', 'correlation_id' => 0]],
-                [['reply_to' => '', 'correlation_id' => 42]],
-                [['reply_to' => 'foo', 'correlation_id' => 0]]];
+        return array(array(array()),
+            array(array('reply_to' => 'foo')),
+                array(array('correlation_id' => 0)),
+                array(array('reply_to' => '', 'correlation_id' => 0)),
+                array(array('reply_to' => '', 'correlation_id' => 42)),
+                array(array('reply_to' => 'foo', 'correlation_id' => 0)));
     }
 
     public function test_it_should_publish_a_new_message_when_done()
     {
-        $message = new Message('', ['reply_to' => 'foo', 'correlation_id' => 42]);
+        $message = new Message('', array('reply_to' => 'foo', 'correlation_id' => 42));
 
         $processor = $this->prophesize('Swarrot\\Processor\\ProcessorInterface');
-        $processor->process($message, [])->willReturn('bar');
+        $processor->process($message, array())->willReturn('bar');
 
         $messagePublisher = $this->prophesize('Swarrot\\Broker\\MessagePublisher\\MessagePublisherInterface');
         $messagePublisher->publish(Argument::that(function ($argument) {
@@ -63,7 +63,7 @@ class RpcServerProcessorTest extends \PHPUnit_Framework_TestCase
 
         $processor = new RpcServerProcessor($processor->reveal(), $messagePublisher->reveal());
 
-        $this->assertSame('bar', $processor->process($message, []));
+        $this->assertSame('bar', $processor->process($message, array()));
     }
 }
 

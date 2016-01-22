@@ -54,7 +54,7 @@ class RpcClientProcessor implements ProcessorInterface, ConfigurableInterface, S
 
         $result = null;
 
-        $this->logger and $this->logger->info('Message received from the RPC Server ; terminating consumer', ['correlation_id' => $properties['correlation_id']]);
+        $this->logger and $this->logger->info('Message received from the RPC Server ; terminating consumer', array('correlation_id' => $properties['correlation_id']));
         $this->awoken = true;
 
         if (null !== $this->processor) {
@@ -68,7 +68,7 @@ class RpcClientProcessor implements ProcessorInterface, ConfigurableInterface, S
     /** {@inheritdoc} */
     public function setDefaultOptions(OptionsResolver $resolver)
     {
-        $resolver->setRequired(['rpc_client_correlation_id']);
+        $resolver->setRequired(array('rpc_client_correlation_id'));
     }
 
     /** {@inheritdoc} */
