@@ -7,14 +7,14 @@ use Swarrot\Processor\ProcessorInterface;
 use Swarrot\Processor\ConfigurableInterface;
 use Swarrot\Processor\SleepyInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SignalHandlerProcessor implements ConfigurableInterface, SleepyInterface
 {
     /**
-     * @var boolean
+     * @var bool
      */
-    public static $shouldExit = false;
+    protected static $shouldExit = false;
 
     /**
      * @var ProcessorInterface
@@ -33,29 +33,33 @@ class SignalHandlerProcessor implements ConfigurableInterface, SleepyInterface
     public function __construct(ProcessorInterface $processor, LoggerInterface $logger = null)
     {
         $this->processor = $processor;
-        $this->logger    = $logger;
+        $this->logger = $logger;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function setDefaultOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'signal_handler_signals' => array(SIGTERM, SIGINT, SIGQUIT)
+            'signal_handler_signals' => extension_loaded('pcntl') ? array(SIGTERM, SIGINT, SIGQUIT) : array(),
         ));
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function sleep(array $options)
     {
+        if (!extension_loaded('pcntl')) {
+            return true;
+        }
+
         return !$this->shouldStop();
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function process(Message $message, array $options)
     {
@@ -87,9 +91,9 @@ class SignalHandlerProcessor implements ConfigurableInterface, SleepyInterface
     }
 
     /**
-     * shouldStop
+     * shouldStop.
      *
-     * @return boolean
+     * @return bool
      */
     protected function shouldStop()
     {

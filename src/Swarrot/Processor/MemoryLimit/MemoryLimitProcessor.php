@@ -1,29 +1,24 @@
 <?php
 
-namespace Swarrot\Processor\MaxMessages;
+namespace Swarrot\Processor\MemoryLimit;
 
-use Swarrot\Processor\ProcessorInterface;
-use Swarrot\Processor\ConfigurableInterface;
-use Swarrot\Broker\Message;
 use Psr\Log\LoggerInterface;
+use Swarrot\Broker\Message;
+use Swarrot\Processor\ConfigurableInterface;
+use Swarrot\Processor\ProcessorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class MaxMessagesProcessor implements ConfigurableInterface
+class MemoryLimitProcessor implements ConfigurableInterface
 {
     /**
      * @var ProcessorInterface
      */
-    protected $processor;
+    private $processor;
 
     /**
      * @var LoggerInterface
      */
-    protected $logger;
-
-    /**
-     * @var int
-     */
-    protected $messagesProcessed = 0;
+    private $logger;
 
     /**
      * @param ProcessorInterface $processor Processor
@@ -34,7 +29,6 @@ class MaxMessagesProcessor implements ConfigurableInterface
         $this->processor = $processor;
         $this->logger = $logger;
     }
-
     /**
      * {@inheritdoc}
      */
@@ -42,11 +36,11 @@ class MaxMessagesProcessor implements ConfigurableInterface
     {
         $return = $this->processor->process($message, $options);
 
-        if (++$this->messagesProcessed >= $options['max_messages']) {
+        if (null !== $options['memory_limit'] && memory_get_usage() >= $options['memory_limit'] * 1024 * 1024) {
             $this->logger and $this->logger->info(
-                sprintf('[MaxMessages] Max messages have been reached (%d)', $options['max_messages']),
+                sprintf('[MemoryLimit] Memory limit has been reached (%d MB)', $options['memory_limit']),
                 array(
-                    'swarrot_processor' => 'max_messages'
+                    'swarrot_processor' => 'memory_limit',
                 )
             );
 
@@ -62,16 +56,11 @@ class MaxMessagesProcessor implements ConfigurableInterface
     public function setDefaultOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'max_messages' => 100,
+            'memory_limit' => null,
         ));
 
-        if (method_exists($resolver, 'setDefined')) {
-            $resolver->setAllowedTypes('max_messages', 'int');
-        } else {
-            // BC for OptionsResolver < 2.6
-            $resolver->setAllowedTypes(array(
-                'max_messages' => 'int',
-            ));
-        }
+        $resolver->setAllowedTypes(array(
+            'memory_limit' => array('integer', 'null'),
+        ));
     }
 }

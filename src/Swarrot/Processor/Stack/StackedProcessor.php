@@ -8,7 +8,7 @@ use Swarrot\Processor\InitializableInterface;
 use Swarrot\Processor\TerminableInterface;
 use Swarrot\Processor\SleepyInterface;
 use Swarrot\Broker\Message;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class StackedProcessor implements ConfigurableInterface, InitializableInterface, TerminableInterface, SleepyInterface
 {
@@ -28,18 +28,16 @@ class StackedProcessor implements ConfigurableInterface, InitializableInterface,
      */
     public function __construct($processor, array $middlewares)
     {
-        $this->processor   = $processor;
+        $this->processor = $processor;
         $this->middlewares = $middlewares;
     }
 
     /**
-     * setDefaultOptions
+     * setDefaultOptions.
      *
-     * @param OptionsResolverInterface $resolver
-     *
-     * @return void
+     * @param OptionsResolver $resolver
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function setDefaultOptions(OptionsResolver $resolver)
     {
         foreach ($this->middlewares as $middleware) {
             if ($middleware instanceof ConfigurableInterface) {
@@ -49,7 +47,7 @@ class StackedProcessor implements ConfigurableInterface, InitializableInterface,
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function initialize(array $options)
     {
@@ -61,7 +59,7 @@ class StackedProcessor implements ConfigurableInterface, InitializableInterface,
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function process(Message $message, array $options)
     {
@@ -79,7 +77,7 @@ class StackedProcessor implements ConfigurableInterface, InitializableInterface,
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function terminate(array $options)
     {
@@ -91,7 +89,7 @@ class StackedProcessor implements ConfigurableInterface, InitializableInterface,
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function sleep(array $options)
     {

@@ -3,10 +3,9 @@
 namespace Swarrot;
 
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTestCase;
 use Swarrot\Broker\Message;
 
-class ConsumerTest extends ProphecyTestCase
+class ConsumerTest extends \PHPUnit_Framework_TestCase
 {
     public function test_it_is_initializable()
     {
@@ -25,10 +24,17 @@ class ConsumerTest extends ProphecyTestCase
         $message = new Message('body', array(), 1);
 
         $provider->get()->willReturn($message);
-        $processor->process(
-            Argument::type('Swarrot\Broker\Message'),
-            Argument::type('array')
-        )->willReturn(false);
+        $provider->getQueueName()->willReturn('image_crop');
+        $processor
+            ->process(
+                $message,
+                array(
+                    'poll_interval' => '50000',
+                    'queue'         => 'image_crop',
+                )
+            )
+            ->willReturn(false)
+        ;
 
         $consumer = new Consumer($provider->reveal(), $processor->reveal());
         $this->assertNull($consumer->consume());
@@ -42,11 +48,12 @@ class ConsumerTest extends ProphecyTestCase
         $message = new Message('body', array(), 1);
 
         $provider->get()->willReturn($message);
+        $provider->getQueueName()->willReturn('');
         $processor->setDefaultOptions(
-            Argument::type('Symfony\Component\OptionsResolver\OptionsResolverInterface')
+            Argument::type('Symfony\Component\OptionsResolver\OptionsResolver')
         )->willReturn(null);
         $processor->process(
-            Argument::type('Swarrot\Broker\Message'),
+            $message,
             Argument::type('array')
         )->willReturn(false);
 
@@ -62,9 +69,10 @@ class ConsumerTest extends ProphecyTestCase
         $message = new Message('body', array(), 1);
 
         $provider->get()->willReturn($message);
+        $provider->getQueueName()->willReturn('');
         $processor->initialize(Argument::type('array'))->willReturn(null);
         $processor->process(
-            Argument::type('Swarrot\Broker\Message'),
+            $message,
             Argument::type('array')
         )->willReturn(false);
 
@@ -80,9 +88,10 @@ class ConsumerTest extends ProphecyTestCase
         $message = new Message('body', array(), 1);
 
         $provider->get()->willReturn($message);
+        $provider->getQueueName()->willReturn('');
         $processor->terminate(Argument::type('array'))->willReturn(null);
         $processor->process(
-            Argument::type('Swarrot\Broker\Message'),
+            $message,
             Argument::type('array')
         )->willReturn(false);
 
@@ -98,9 +107,10 @@ class ConsumerTest extends ProphecyTestCase
         $message = new Message('body', array(), 1);
 
         $provider->get()->willReturn($message);
+        $provider->getQueueName()->willReturn('');
         $processor->sleep(Argument::type('array'))->willReturn(null);
         $processor->process(
-            Argument::type('Swarrot\Broker\Message'),
+            $message,
             Argument::type('array')
         )->willReturn(false);
 

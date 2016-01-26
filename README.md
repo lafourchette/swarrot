@@ -6,7 +6,7 @@
 [![Latest Stable Version](https://poser.pugx.org/swarrot/swarrot/v/stable.svg)](https://packagist.org/packages/swarrot/swarrot)
 [![Latest Unstable Version](https://poser.pugx.org/swarrot/swarrot/v/unstable.svg)](https://packagist.org/packages/swarrot/swarrot)
 
-Swarrot is PHP library to consume messages from a broker.
+Swarrot is PHP library to consume messages from any broker.
 
 ## Installation
 
@@ -68,7 +68,7 @@ You now have a `Swarrot\Broker\MessageProviderInterface` to retrieve messages
 and a Processor to process them. So, ask the `Swarrot\Consumer`to do it's job :
 
 ```php
-use Swarrot\Message;
+use Swarrot\Consumer;
 
 $consumer = new Consumer($messageProvider, $processor);
 $consumer->consume();
@@ -117,10 +117,14 @@ Here is an illustration to show you what append when this order is used:
 * [AckProcessor](src/Swarrot/Processor/Ack)
 * [Doctrine related processors](src/Swarrot/Processor/Doctrine) (thanks to [Adrien Brault](https://github.com/adrienbrault))
 * [ExceptionCatcherProcessor](src/Swarrot/Processor/ExceptionCatcher)
+* [InsomniacProcessor](src/Swarrot/Processor/Insomniac) (thanks to [Adrien Brault](https://github.com/adrienbrault))
 * [InstantRetryProcessor](src/Swarrot/Processor/InstantRetry)
 * [MaxExecutionTimeProcessor](src/Swarrot/Processor/MaxExecutionTime) (thanks to [Remy Lemeunier](https://github.com/remyLemeunier))
 * [MaxMessagesProcessor](src/Swarrot/Processor/MaxMessages) (thanks to [Remy Lemeunier](https://github.com/remyLemeunier))
+* [MemoryLimitProcessor](src/Swarrot/Processor/MemoryLimit) (thanks to [Christophe Coevoet](https://github.com/stof))
+* [NewRelicProcessor](src/Swarrot/Processor/NewRelic) (thanks to [Adrien Brault](https://github.com/adrienbrault))
 * [RetryProcessor](src/Swarrot/Processor/Retry)
+* [RPC related processors](src/Swarrot/Processor/RPC) (thanks to [Baptiste Clavié](https://github.com/Taluu))
 * [SignalHandlerProcessor](src/Swarrot/Processor/SignalHandler)
 
 ### Create your own processor

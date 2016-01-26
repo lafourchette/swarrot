@@ -6,7 +6,7 @@ use Swarrot\Processor\ProcessorInterface;
 use Swarrot\Processor\ConfigurableInterface;
 use Swarrot\Broker\Message;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Swarrot\Broker\MessagePublisher\MessagePublisherInterface;
 
 class RetryProcessor implements ConfigurableInterface
@@ -19,11 +19,11 @@ class RetryProcessor implements ConfigurableInterface
     {
         $this->processor = $processor;
         $this->publisher = $publisher;
-        $this->logger    = $logger;
+        $this->logger = $logger;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function process(Message $message, array $options)
     {
@@ -36,7 +36,7 @@ class RetryProcessor implements ConfigurableInterface
             if (isset($properties['headers']['swarrot_retry_attempts'])) {
                 $attempts = $properties['headers']['swarrot_retry_attempts'];
             }
-            $attempts++;
+            ++$attempts;
 
             if ($attempts > $options['retry_attempts']) {
                 $this->logger and $this->logger->warning(
@@ -52,13 +52,14 @@ class RetryProcessor implements ConfigurableInterface
                 throw $e;
             }
 
+            if (!isset($properties['headers'])) {
+                $properties['headers'] = array();
+            }
+            $properties['headers']['swarrot_retry_attempts'] = $attempts;
+
             $message = new Message(
                 $message->getBody(),
-                array(
-                    'headers' => array(
-                        'swarrot_retry_attempts' => $attempts
-                    )
-                )
+                $properties
             );
 
             $key = str_replace('%attempt%', $attempts, $options['retry_key_pattern']);
@@ -80,21 +81,28 @@ class RetryProcessor implements ConfigurableInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function setDefaultOptions(OptionsResolver $resolver)
     {
         $resolver
             ->setDefaults(array(
                 'retry_attempts' => 3,
             ))
             ->setRequired(array(
-                'retry_key_pattern'
-            ))
-            ->setAllowedTypes(array(
-                'retry_attempts' => 'integer',
-                'retry_key_pattern' => 'string',
+                'retry_key_pattern',
             ))
         ;
+
+        if (method_exists($resolver, 'setDefined')) {
+            $resolver->setAllowedTypes('retry_attempts', 'int');
+            $resolver->setAllowedTypes('retry_key_pattern', 'string');
+        } else {
+            // BC for OptionsResolver < 2.6
+            $resolver->setAllowedTypes(array(
+                'retry_attempts' => 'int',
+                'retry_key_pattern' => 'string',
+            ));
+        }
     }
 }

@@ -2,16 +2,14 @@
 
 namespace Swarrot\Processor;
 
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface ConfigurableInterface extends ProcessorInterface
 {
     /**
-     * setDefaultOptions
+     * setDefaultOptions.
      *
-     * @param OptionsResolverInterface $resolver
-     *
-     * @return void
+     * @param OptionsResolver $resolver
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver);
+    public function setDefaultOptions(OptionsResolver $resolver);
 }

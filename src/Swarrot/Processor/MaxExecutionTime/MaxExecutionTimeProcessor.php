@@ -5,7 +5,7 @@ namespace Swarrot\Processor\MaxExecutionTime;
 use Swarrot\Processor\ProcessorInterface;
 use Swarrot\Broker\Message;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Swarrot\Processor\InitializableInterface;
 use Swarrot\Processor\ConfigurableInterface;
 use Swarrot\Processor\SleepyInterface;
@@ -28,28 +28,32 @@ class MaxExecutionTimeProcessor implements ConfigurableInterface, InitializableI
     protected $startTime;
 
     /**
-     *
      * @param ProcessorInterface $processor Processor
      * @param LoggerInterface    $logger    Logger
      */
     public function __construct(ProcessorInterface $processor, LoggerInterface $logger = null)
     {
         $this->processor = $processor;
-        $this->logger    = $logger;
+        $this->logger = $logger;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function setDefaultOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'max_execution_time' => 300
+            'max_execution_time' => 300,
         ));
 
-        $resolver->setAllowedTypes(array(
-            'max_execution_time' => 'integer',
-        ));
+        if (method_exists($resolver, 'setDefined')) {
+            $resolver->setAllowedTypes('max_execution_time', 'int');
+        } else {
+            // BC for OptionsResolver < 2.6
+            $resolver->setAllowedTypes(array(
+                'max_execution_time' => 'int',
+            ));
+        }
     }
 
     /**
@@ -63,7 +67,7 @@ class MaxExecutionTimeProcessor implements ConfigurableInterface, InitializableI
     /**
      * @param array $options
      *
-     * @return boolean
+     * @return bool
      */
     public function sleep(array $options)
     {
@@ -71,7 +75,7 @@ class MaxExecutionTimeProcessor implements ConfigurableInterface, InitializableI
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function process(Message $message, array $options)
     {
@@ -83,11 +87,11 @@ class MaxExecutionTimeProcessor implements ConfigurableInterface, InitializableI
     }
 
     /**
-     * isTimeExceeded
+     * isTimeExceeded.
      *
      * @param array $options
      *
-     * @return boolean
+     * @return bool
      */
     protected function isTimeExceeded(array $options)
     {

@@ -6,7 +6,7 @@ use Swarrot\Broker\Message;
 use Swarrot\Processor\ConfigurableInterface;
 use Swarrot\Processor\ProcessorInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class InstantRetryProcessor implements ConfigurableInterface
 {
@@ -23,11 +23,11 @@ class InstantRetryProcessor implements ConfigurableInterface
     public function __construct(ProcessorInterface $processor, LoggerInterface $logger = null)
     {
         $this->processor = $processor;
-        $this->logger    = $logger;
+        $this->logger = $logger;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function process(Message $message, array $options)
     {
@@ -41,11 +41,11 @@ class InstantRetryProcessor implements ConfigurableInterface
                     sprintf(
                         '[InstantRetry] An exception occurred. Message #%d will be processed again in %d ms',
                         $message->getId(),
-                        $options['instant_retry_delay']/1000
+                        $options['instant_retry_delay'] / 1000
                     ),
                     array(
                         'swarrot_processor' => 'instant_retry',
-                        'exception'         => $e,
+                        'exception' => $e,
                     )
                 );
 
@@ -57,9 +57,9 @@ class InstantRetryProcessor implements ConfigurableInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function setDefaultOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'instant_retry_delay' => 2000000,

@@ -22,7 +22,7 @@ class Message
     protected $id;
 
     /**
-     * __construct
+     * __construct.
      *
      * In AMQP 0.9.1, a message contains properties. One of this properties is
      * "headers".
@@ -36,19 +36,18 @@ class Message
      * broker.
      *
      * More information on AMQP version:
+     *
      * @see: http://www.amqp.org/resources/download
      *
      * @param mixed $body
      * @param array $properties
      * @param mixed $id
-     *
-     * @return void
      */
     public function __construct($body = null, array $properties = array(), $id = null)
     {
-        $this->body       = $body;
+        $this->body = $body;
         $this->properties = $properties;
-        $this->id         = $id;
+        $this->id = $id;
     }
 
     public function getBody()

@@ -3,7 +3,6 @@
 namespace Swarrot;
 
 use Swarrot\Broker\MessageProvider\MessageProviderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Swarrot\Processor\ProcessorInterface;
 use Swarrot\Processor\ConfigurableInterface;
@@ -25,7 +24,7 @@ class Consumer
     protected $processor;
 
     /**
-     * @var OptionsResolverInterface
+     * @var OptionsResolver
      */
     protected $optionsResolver;
 
@@ -35,26 +34,23 @@ class Consumer
     protected $logger;
 
     /**
-     *
      * @param MessageProviderInterface $messageProvider
      * @param ProcessorInterface       $processor
-     * @param OptionsResolverInterface $optionsResolver
+     * @param OptionsResolver          $optionsResolver
      * @param LoggerInterface          $logger
      */
-    public function __construct(MessageProviderInterface $messageProvider, ProcessorInterface $processor, OptionsResolverInterface $optionsResolver = null, LoggerInterface $logger = null)
+    public function __construct(MessageProviderInterface $messageProvider, ProcessorInterface $processor, OptionsResolver $optionsResolver = null, LoggerInterface $logger = null)
     {
         $this->messageProvider = $messageProvider;
-        $this->processor       = $processor;
+        $this->processor = $processor;
         $this->optionsResolver = $optionsResolver ?: new OptionsResolver();
-        $this->logger          = $logger;
+        $this->logger = $logger;
     }
 
     /**
-     * consume
+     * consume.
      *
      * @param array $options Parameters sent to the processor
-     *
-     * @return void
      */
     public function consume(array $options = array())
     {
@@ -65,7 +61,8 @@ class Consumer
             ));
         }
         $this->optionsResolver->setDefaults(array(
-            'poll_interval' => 50000
+            'poll_interval' => 50000,
+            'queue' => $this->messageProvider->getQueueName(),
         ));
 
         if ($this->processor instanceof ConfigurableInterface) {
@@ -108,7 +105,6 @@ class Consumer
     }
 
     /**
-     *
      * @param MessageProviderInterface $messageProvider Message provider
      *
      * @return self
@@ -141,7 +137,7 @@ class Consumer
     }
 
     /**
-     * @return OptionsResolverInterface
+     * @return OptionsResolver
      */
     public function getOptionsResolver()
     {
@@ -149,11 +145,11 @@ class Consumer
     }
 
     /**
-     * @param OptionsResolverInterface $optionsResolver
+     * @param OptionsResolver $optionsResolver
      *
      * @return self
      */
-    public function setOptionsResolver(OptionsResolverInterface $optionsResolver)
+    public function setOptionsResolver(OptionsResolver $optionsResolver)
     {
         $this->optionsResolver = $optionsResolver;
 
