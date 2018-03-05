@@ -53,7 +53,7 @@ class PeclPackageMessagePublisher implements MessagePublisherInterface
         }
 
         $this->exchange->publish(
-            $message->getBody(),
+            $body,
             $key,
             $this->flags,
             $this->sanitizeProperties($properties)
